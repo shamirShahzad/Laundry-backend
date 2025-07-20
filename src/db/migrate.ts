@@ -1,6 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-const pool = require("./config");
+import fs from "fs";
+import path from "path";
+import pool from "./config";
 
 async function runMigrations() {
   const client = await pool.connect();
@@ -17,12 +17,12 @@ async function runMigrations() {
             `);
 
     const res = await client.query(` SELECT filename FROM migrations`);
-    const appliedMigrations = res.rows.map((row) => row.filename);
+    const appliedMigrations = res.rows.map((row: any) => row.filename);
 
     const migrationDir = path.join(__dirname, "../migrations");
     const files = fs
       .readdirSync(migrationDir)
-      .filter((f) => f.endsWith(".sql"))
+      .filter((f: any) => f.endsWith(".sql"))
       .sort();
 
     for (const file of files) {
