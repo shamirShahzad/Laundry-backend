@@ -5,6 +5,9 @@ import userRouter from "./routes/UserRoutes";
 const app = express();
 const port = process.env.PORT || 3000;
 
+//Middlewares
+app.use(express.json());
+
 //Routes
 app.use("/api/v1/users", userRouter);
 

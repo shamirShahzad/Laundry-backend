@@ -1,10 +1,19 @@
-const Roles = {
+export const Roles = {
   ADMIN: "admin",
   USER: "user",
 };
 
-const Enums = {
-  Roles,
-};
+export const STATUS_CODES = {
+  SUCCESS: 200,
+  SUCCESS_CREATED: 201,
+  SUCCESS_PROCESSING: 202,
+  SUCCESS_RESPONSE: 203,
+  SUCCESS_NO_CONTENT: 204,
 
-export default Enums;
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  CONFLICT: 409,
+  INTERNAL_SERVER_ERROR: 500,
+};
