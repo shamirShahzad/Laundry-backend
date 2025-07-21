@@ -1,0 +1,88 @@
+import pool from "../../../db/config";
+import { success, z } from "zod";
+import { User } from "../../../models/user.model";
+import { Response } from "express";
+
+export const registerUser = async (
+  newUser: z.infer<typeof User>,
+  res: Response
+) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const queryStr = `
+                INSERT INTO users
+                (id,
+                name,
+                email,
+                password,
+                phone,
+                role,
+                created_at,
+                updated_at)
+
+
+                VALUES (
+                $1,
+                $2,
+                $3,
+                $4,
+                $5,
+                $6,
+                $7,
+                $8)
+                RETURNING id,name,email,phone,role,created_at,updated_at
+              `;
+    const result = await client.query(queryStr, [
+      newUser.id,
+      newUser.name,
+      newUser.email,
+      newUser.password,
+      newUser.phone,
+      newUser.role,
+      newUser.created_at,
+      newUser.updated_at,
+    ]);
+
+    // Commit the transaction
+    await client.query("COMMIT");
+    return {
+      success: true,
+      data: result.rows[0],
+    };
+  } catch (insertionError: any) {
+    //Rollback if any error in adding data
+    await client.query("ROLLBACK");
+
+    return {
+      success: false,
+      errorMessage: "Something went wrong while registering user",
+      error: insertionError,
+    };
+  } finally {
+    client.release(true);
+  }
+};
+
+export const loginUser = async (email: string) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const queryStr = `Select * from users where email = $1`;
+    const result = await client.query(queryStr, [email]);
+    await client.query("COMMIT");
+    return {
+      success: true,
+      data: result.rows[0],
+    };
+  } catch (err: any) {
+    await client.query("ROLLBACK");
+    return {
+      success: false,
+      errorMessage: "Something went wrong while logging in",
+      error: err,
+    };
+  } finally {
+    client.release(true);
+  }
+};
