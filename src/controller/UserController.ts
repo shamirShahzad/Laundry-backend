@@ -12,9 +12,6 @@ const userController = {
   register: async (req: Request, res: Response) => {
     let newUser: z.infer<typeof User>;
     const client = await pool.connect();
-
-    console.log(req.body);
-
     //Creating a hashed password and parsing data from the request object to the
     //user model
     try {
