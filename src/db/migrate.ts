@@ -2,6 +2,10 @@ import fs from "fs";
 import path from "path";
 import pool from "./config";
 
+type MigrationRow = {
+  filename: string;
+};
+
 async function runMigrations() {
   const client = await pool.connect();
 
@@ -16,13 +20,15 @@ async function runMigrations() {
         );
             `);
 
-    const res = await client.query(` SELECT filename FROM migrations`);
-    const appliedMigrations = res.rows.map((row: any) => row.filename);
+    const res = await client.query<MigrationRow>(
+      ` SELECT filename FROM migrations`
+    );
+    const appliedMigrations = res.rows.map((row) => row.filename);
 
     const migrationDir = path.join(__dirname, "../migrations");
     const files = fs
       .readdirSync(migrationDir)
-      .filter((f: any) => f.endsWith(".sql"))
+      .filter((f) => f.endsWith(".sql"))
       .sort();
 
     for (const file of files) {

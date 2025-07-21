@@ -1,8 +1,7 @@
+import { Request, Response } from "express";
 const userController = {
-  register: (req: any, res: any) => {
-    res.send("User registered");
-  },
-  login: (req: any, res: any) => {
+  register: (req: Request, res: Response) => {},
+  login: (req: Request, res: Response) => {
     res.send("User logged in");
   },
 };
