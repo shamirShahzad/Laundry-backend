@@ -10,6 +10,7 @@ import { mapErrors } from "../util/utilFunctions";
 import { STATUS_CODES } from "../util/enums";
 import { loginRequestTup } from "../schema/user.schema";
 import { loginUser, registerUser } from "../lib/user/db/user_db_functions";
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
 import * as jwt from "jsonwebtoken";
 
 const { SUCCESS_CREATED, BAD_REQUEST, INTERNAL_SERVER_ERROR, SUCCESS } =
@@ -44,7 +45,7 @@ const userController = {
 
     //Sql query for adding the new user to the users tables using a transaction
 
-    const registerTup = await registerUser(newUser, res);
+    const registerTup = await registerUser(newUser);
     if (registerTup.success == false) {
       res.status(INTERNAL_SERVER_ERROR);
       return next(new Error(registerTup.errorMessage));
@@ -116,6 +117,19 @@ const userController = {
       message: "User logged in successfully",
       data: loginTup.data,
       token,
+    });
+  },
+
+  dashboard: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    return res.status(SUCCESS).send({
+      success: true,
+      statusCode: SUCCESS,
+      message: "User logged in successfully",
+      data: req.user,
     });
   },
 };
