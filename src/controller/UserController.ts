@@ -4,7 +4,7 @@ import { User } from "../models/user.model";
 import { v4 } from "uuid";
 import { Roles } from "../util/enums";
 import pool from "../db/config";
-import { z } from "zod";
+import { success, z } from "zod";
 import bcrypt from "bcrypt";
 import { mapErrors } from "../util/utilFunctions";
 import { STATUS_CODES } from "../util/enums";
@@ -120,12 +120,20 @@ const userController = {
     });
   },
 
-  dashboard: async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
-    return res.status(SUCCESS).send({
+  logout: async (req: AuthenticatedRequest, res: Response) => {
+    req.user = null;
+    res.cookie("token", "", { maxAge: 0 });
+    res.status(SUCCESS).json({
+      success: true,
+      statusCode: SUCCESS,
+      message: "User logged out successfully",
+    });
+  },
+
+  dashboard: async (req: AuthenticatedRequest, res: Response) => {
+    console.log(req.user);
+
+    return res.status(SUCCESS).json({
       success: true,
       statusCode: SUCCESS,
       message: "User logged in successfully",

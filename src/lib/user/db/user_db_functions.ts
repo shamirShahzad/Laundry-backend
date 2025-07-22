@@ -102,7 +102,6 @@ export const getUserById = async (id: string) => {
     await client.query("BEGIN");
 
     const result = await client.query(queryStr, [id]);
-    console.log(result);
     await client.query("COMMIT");
     return {
       success: true,

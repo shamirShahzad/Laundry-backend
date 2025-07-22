@@ -4,7 +4,7 @@ import { z } from "zod";
 import { getUserById } from "../lib/user/db/user_db_functions";
 import { STATUS_CODES } from "../util/enums";
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
-const { UNAUTHORIZED } = STATUS_CODES;
+const { UNAUTHORIZED, NOT_FOUND } = STATUS_CODES;
 
 export const isAuthenticated = async (
   req: AuthenticatedRequest,
@@ -22,8 +22,8 @@ export const isAuthenticated = async (
   console.log(decoded.id);
   const user = await getUserById(decoded.id);
   if (user.success == false) {
-    res.status(UNAUTHORIZED);
-    return next(new Error("Unauthorized"));
+    res.status(NOT_FOUND);
+    return next(new Error("Failed to get user"));
   }
   req.user = user.data;
   return next();
