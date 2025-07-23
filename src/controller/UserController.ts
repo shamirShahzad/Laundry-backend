@@ -3,8 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { User } from "../models/user.model";
 import { v4 } from "uuid";
 import { Roles } from "../util/enums";
-import pool from "../db/config";
-import { success, z } from "zod";
+import { z } from "zod";
 import bcrypt from "bcrypt";
 import { mapErrors } from "../util/utilFunctions";
 import { STATUS_CODES } from "../util/enums";
@@ -131,8 +130,6 @@ const userController = {
   },
 
   dashboard: async (req: AuthenticatedRequest, res: Response) => {
-    console.log(req.user);
-
     return res.status(SUCCESS).json({
       success: true,
       statusCode: SUCCESS,

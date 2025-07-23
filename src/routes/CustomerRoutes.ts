@@ -1,0 +1,13 @@
+import express from "express";
+import customerController from "../controller/CustomerController";
+import { isAuthenticated } from "../middlewares/isAuthenticated";
+
+const customerRouter = express.Router();
+
+customerRouter.post(
+  "/create",
+  isAuthenticated,
+  customerController.createCustomer
+);
+
+export default customerRouter;

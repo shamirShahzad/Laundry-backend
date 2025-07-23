@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import { z } from "zod";
 import { getUserById } from "../lib/user/db/user_db_functions";
 import { STATUS_CODES } from "../util/enums";
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
@@ -19,7 +18,6 @@ export const isAuthenticated = async (
     id: string;
   };
 
-  console.log(decoded.id);
   const user = await getUserById(decoded.id);
   if (user.success == false) {
     res.status(NOT_FOUND);
