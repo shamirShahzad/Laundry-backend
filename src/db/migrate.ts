@@ -35,6 +35,7 @@ async function runMigrations() {
       if (!appliedMigrations.includes(file)) {
         const filePath = path.join(migrationDir, file);
         const sql = fs.readFileSync(filePath, "utf8");
+        console.log(sql);
         console.log(`Applying migration ${file}`);
         await client.query(sql);
         await client.query(`INSERT INTO migrations (filename) VALUES ($1)`, [
