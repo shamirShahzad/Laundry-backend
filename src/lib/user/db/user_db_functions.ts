@@ -1,7 +1,8 @@
 import pool from "../../../db/config";
 import { z } from "zod";
-import { v4 } from "uuid";
 import { User } from "../../../models/user.model";
+import { ERRORS } from "../../../util/enums";
+const { ERROR_NOT_FOUND } = ERRORS;
 
 export const registerUser = async (newUser: z.infer<typeof User>) => {
   const client = await pool.connect();
@@ -68,6 +69,13 @@ export const loginUser = async (email: string) => {
     const queryStr = `Select * from users where email = $1`;
     const result = await client.query(queryStr, [email]);
     await client.query("COMMIT");
+    if (result.rows.length == 0) {
+      return {
+        success: false,
+        errorMessage: ERROR_NOT_FOUND,
+        error: ERROR_NOT_FOUND,
+      };
+    }
     return {
       success: true,
       data: result.rows[0],
@@ -103,6 +111,13 @@ export const getUserById = async (id: string) => {
 
     const result = await client.query(queryStr, [id]);
     await client.query("COMMIT");
+    if (result.rows.length == 0) {
+      return {
+        success: false,
+        errorMessage: ERROR_NOT_FOUND,
+        error: ERROR_NOT_FOUND,
+      };
+    }
     return {
       success: true,
       data: result.rows[0],

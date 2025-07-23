@@ -17,3 +17,7 @@ export const STATUS_CODES = {
   CONFLICT: 409,
   INTERNAL_SERVER_ERROR: 500,
 };
+
+export const ERRORS = {
+  ERROR_NOT_FOUND: "Not Found",
+};

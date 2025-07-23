@@ -10,4 +10,6 @@ customerRouter.post(
   customerController.createCustomer
 );
 
+customerRouter.get("/", isAuthenticated, customerController.getCustomers);
+
 export default customerRouter;
