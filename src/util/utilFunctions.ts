@@ -11,3 +11,13 @@ export const mapErrors = (err: string): any => {
     return [{ message: "Invalid JSON format in error.message" }];
   }
 };
+
+export const fillEmptyObject = (source: any, fallback: any) => {
+  const result = { ...source };
+  for (const key in fallback) {
+    if (result[key] == undefined || result[key] == null) {
+      result[key] = fallback[key];
+    }
+  }
+  return result;
+};

@@ -1,15 +1,19 @@
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
 import { Response, NextFunction } from "express";
-import { Customer } from "../models/customer.model";
-import z from "zod";
+import { Customer, CustomerUpdate } from "../models/customer.model";
+import z, { success } from "zod";
 import {
   createCustomer,
+  deleteCustomer,
   getAllCustomers,
   getCustomerById,
   getCustomerByPhone,
+  updateCustomer,
 } from "../lib/user/db/customer_db_functions";
 import { STATUS_CODES, ERRORS } from "../util/enums";
-const { BAD_REQUEST, SUCCESS_CREATED, SUCCESS, NOT_FOUND } = STATUS_CODES;
+import { fillEmptyObject } from "../util/utilFunctions";
+const { BAD_REQUEST, SUCCESS_CREATED, SUCCESS, NOT_FOUND, SUCCESS_NO_CONTENT } =
+  STATUS_CODES;
 const { ERROR_NOT_FOUND } = ERRORS;
 const customerController = {
   createCustomer: async (
@@ -106,6 +110,83 @@ const customerController = {
         data: result.data,
       });
     } catch (error: any) {
+      return next(new Error(error));
+    }
+  },
+
+  updateCustomer: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    let customer: z.infer<typeof CustomerUpdate>;
+    const { id } = req.params;
+    if (id === undefined || id === null) {
+      return next(new Error(ERROR_NOT_FOUND));
+    }
+
+    try {
+      const oldTup = await getCustomerById(Number(id));
+      if (oldTup.success == false) {
+        if (oldTup.errorMessage == ERROR_NOT_FOUND) {
+          res.status(NOT_FOUND);
+          return next(new Error("Customer not found"));
+        }
+        res.status(BAD_REQUEST);
+        return next(new Error(oldTup.error));
+      }
+      const updateTup = req.body;
+      const filledUpdateTup = fillEmptyObject(updateTup, oldTup.data);
+      console.log("Update TUP", filledUpdateTup);
+      customer = CustomerUpdate.parse(filledUpdateTup);
+      const updateCustomerTup = await updateCustomer(Number(id), customer);
+      if (updateCustomerTup?.success == false) {
+        if (updateCustomerTup.errorMessage == ERROR_NOT_FOUND) {
+          res.status(NOT_FOUND);
+          return next(new Error("Customer not found"));
+        }
+        res.status(BAD_REQUEST);
+        return next(new Error(updateCustomerTup.error));
+      }
+      res.status(SUCCESS);
+      return res.json({
+        success: true,
+        statusCode: SUCCESS,
+        message: "Customer updated successfully",
+        data: updateCustomerTup.data,
+      });
+    } catch (error: any) {
+      return next(new Error(error));
+    }
+  },
+
+  deleteCustomer: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { id } = req.params;
+    if (id === undefined || id === null) {
+      return next(new Error(ERROR_NOT_FOUND));
+    }
+    try {
+      const result = await deleteCustomer(Number(id));
+      if (result.success == false) {
+        if (result.errorMessage == ERROR_NOT_FOUND) {
+          res.status(NOT_FOUND);
+          return next(new Error(ERROR_NOT_FOUND));
+        }
+        res.status(BAD_REQUEST);
+        return next(new Error(result.error));
+      }
+      res.status(SUCCESS);
+      return res.json({
+        success: true,
+        statusCode: SUCCESS,
+        message: "Customer deleted successfully",
+      });
+    } catch (error: any) {
+      res.status(BAD_REQUEST);
       return next(new Error(error));
     }
   },

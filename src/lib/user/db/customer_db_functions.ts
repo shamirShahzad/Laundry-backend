@@ -1,5 +1,5 @@
-import z from "zod";
-import { Customer } from "../../../models/customer.model";
+import z, { success } from "zod";
+import { Customer, CustomerUpdate } from "../../../models/customer.model";
 import pool from "../../../db/config";
 import { ERRORS } from "../../../util/enums";
 const { ERROR_NOT_FOUND } = ERRORS;
@@ -136,6 +136,89 @@ export const getAllCustomers = async () => {
       success: false,
       errorMessage: "Something went wrong while getting customers",
       error: err,
+    };
+  } finally {
+    client.release(true);
+  }
+};
+
+export const updateCustomer = async (
+  id: number,
+  newCustomer: z.infer<typeof CustomerUpdate>
+) => {
+  const { name, email, phone, address } = newCustomer;
+  const client = await pool.connect();
+  const qStr = `
+    UPDATE customers
+    SET
+    name = $1,
+    email = $2,
+    phone = $3,
+    address = $4,
+    updated_at = $5
+    WHERE id = $6
+    RETURNING *
+  `;
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(qStr, [
+      name,
+      email,
+      phone,
+      address,
+      new Date(),
+      id,
+    ]);
+    await client.query("COMMIT");
+    if (result.rows.length == 0) {
+      return {
+        success: false,
+        errorMessage: ERROR_NOT_FOUND,
+        error: ERROR_NOT_FOUND,
+      };
+    }
+    return {
+      success: true,
+      data: result.rows[0],
+    };
+  } catch (error: any) {
+    await client.query("ROLLBACK");
+    return {
+      success: false,
+      errorMessage: "Something went wrong while updating customer",
+      error: error,
+    };
+  } finally {
+    client.release(true);
+  }
+};
+
+export const deleteCustomer = async (id: number) => {
+  const client = await pool.connect();
+  const qStr = `
+  DELETE FROM customers WHERE id = $1
+  `;
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(qStr, [id]);
+    await client.query("COMMIT");
+    if (result.rowCount == 0) {
+      return {
+        success: false,
+        errorMessage: ERROR_NOT_FOUND,
+        error: ERROR_NOT_FOUND,
+      };
+    }
+    return {
+      success: true,
+      data: null,
+    };
+  } catch (error: any) {
+    await client.query("ROLLBACK");
+    return {
+      success: false,
+      errorMessage: "Something went wrong while deleting customer",
+      error: error,
     };
   } finally {
     client.release(true);
