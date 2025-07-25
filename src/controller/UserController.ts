@@ -5,7 +5,6 @@ import { v4 } from "uuid";
 import { Roles } from "../util/enums";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { mapErrors } from "../util/utilFunctions";
 import { STATUS_CODES } from "../util/enums";
 import { loginRequestTup } from "../schema/user.schema";
 import { loginUser, registerUser } from "../lib/user/db/user_db_functions";
@@ -31,15 +30,8 @@ const userController = {
       myUser.password = hashedPassword;
       newUser = User.parse(myUser);
     } catch (validationError: any) {
-      return res.status(BAD_REQUEST).send({
-        success: false,
-        statusCode: BAD_REQUEST,
-        message: "Something went wrong while parsing data",
-        errorMessage: {
-          name: validationError.name,
-          message: mapErrors(validationError.message),
-        },
-      });
+      res.status(BAD_REQUEST);
+      return next(validationError);
     }
 
     //Sql query for adding the new user to the users tables using a transaction

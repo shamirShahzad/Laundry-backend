@@ -28,12 +28,12 @@ const customerController = {
       myCustomer.updated_at = null;
       newCustomer = Customer.parse(myCustomer);
     } catch (error: any) {
-      return next(new Error(error.message));
+      return next(error);
     }
     const createCustomerTup = await createCustomer(newCustomer);
     if (createCustomerTup.success == false) {
       res.status(BAD_REQUEST);
-      return next(new Error(createCustomerTup.error));
+      return next(createCustomerTup.error);
     }
     res.status(SUCCESS_CREATED);
     return res.json({
@@ -59,7 +59,7 @@ const customerController = {
               return next(new Error("Customer not found"));
             }
             res.status(BAD_REQUEST);
-            return next(new Error(customerTup.error));
+            return next(customerTup.error);
           }
           res.status(SUCCESS);
           return res.json({
@@ -69,7 +69,7 @@ const customerController = {
             data: customerTup.data,
           });
         } catch (error: any) {
-          return next(new Error(error));
+          return next(error);
         }
       } else if (phone) {
         try {
@@ -80,7 +80,7 @@ const customerController = {
               return next(new Error("Customer not found"));
             }
             res.status(BAD_REQUEST);
-            return next(new Error(customerTup.error));
+            return next(customerTup.error);
           }
           res.status(SUCCESS);
           return res.json({
@@ -90,7 +90,7 @@ const customerController = {
             data: customerTup.data,
           });
         } catch (error: any) {
-          return next(new Error(error));
+          return next(error);
         }
       }
       const result = await getAllCustomers();
@@ -100,7 +100,7 @@ const customerController = {
           return next(new Error("Customers not found"));
         }
         res.status(BAD_REQUEST);
-        return next(new Error(result.error));
+        return next(result.error);
       }
       res.status(SUCCESS);
       return res.json({
@@ -110,7 +110,7 @@ const customerController = {
         data: result.data,
       });
     } catch (error: any) {
-      return next(new Error(error));
+      return next(error);
     }
   },
 
@@ -133,7 +133,7 @@ const customerController = {
           return next(new Error("Customer not found"));
         }
         res.status(BAD_REQUEST);
-        return next(new Error(oldTup.error));
+        return next(oldTup.error);
       }
       const updateTup = req.body;
       const filledUpdateTup = fillEmptyObject(updateTup, oldTup.data);
@@ -146,7 +146,7 @@ const customerController = {
           return next(new Error("Customer not found"));
         }
         res.status(BAD_REQUEST);
-        return next(new Error(updateCustomerTup.error));
+        return next(updateCustomerTup.error);
       }
       res.status(SUCCESS);
       return res.json({
@@ -156,7 +156,7 @@ const customerController = {
         data: updateCustomerTup.data,
       });
     } catch (error: any) {
-      return next(new Error(error));
+      return next(error);
     }
   },
 
@@ -177,7 +177,7 @@ const customerController = {
           return next(new Error(ERROR_NOT_FOUND));
         }
         res.status(BAD_REQUEST);
-        return next(new Error(result.error));
+        return next(result.error);
       }
       res.status(SUCCESS);
       return res.json({
@@ -187,7 +187,7 @@ const customerController = {
       });
     } catch (error: any) {
       res.status(BAD_REQUEST);
-      return next(new Error(error));
+      return next(error);
     }
   },
 };
