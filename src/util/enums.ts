@@ -20,4 +20,5 @@ export const STATUS_CODES = {
 
 export const ERRORS = {
   ERROR_NOT_FOUND: "Not Found",
+  ERROR_BAD_REQUEST: "Bad Request",
 };
