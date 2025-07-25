@@ -18,7 +18,6 @@ const errorMiddleWare = (
       })),
     });
   }
-  console.log("IT IS NoT");
   res.json({
     status: res.status,
     message: err.message,

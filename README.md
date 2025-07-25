@@ -42,7 +42,22 @@ Follow these steps to set up and run the project locally:
 
    Create a `.env` file in the root of the project and set up the necessary environment variables. Refer to `.env.example` if available for guidance on required variables. Add PORT,DATABASE,DATABASE_PORT,DATABASE_USER,DATABASE_HOST,DATABASE_PASSWORD and fill those values with the appropriate data.
 
-7. **Run Database Migrations**
+7. **Create database before running migrations**
+   Using a terminal in either vs code or bash terminal after properly installing postgresql run this command
+
+   ```bash
+   psql -U postgres
+   ```
+
+   after running this command enter your postgres password, doing that  will take you to the psql terminal in which you need to create a database using this command
+
+   ```bash
+   CREATE DATABASE laundry
+   ```
+
+   This step is necessary as if you do not have a database called laundry in your postgres schema the project will not be able to run
+
+8. **Run Database Migrations**
 
    Execute the database migrations to set up the necessary tables:
 
@@ -50,7 +65,7 @@ Follow these steps to set up and run the project locally:
    npm run migrate
    ```
 
-8. **Start the Development Server**
+9.  **Start the Development Server**
 
    Start the development server using the following command:
 
@@ -60,7 +75,7 @@ Follow these steps to set up and run the project locally:
 
    The server should now be running on `http://localhost:3000` or the port specified in the `.env` file.
 
-9. **Access the Application**
+10. **Access the Application**
 
    Open a web browser and navigate to `http://localhost:3000` to access the application.
 
