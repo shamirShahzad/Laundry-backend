@@ -65,7 +65,7 @@ Follow these steps to set up and run the project locally:
    npm run migrate
    ```
 
-9.  **Start the Development Server**
+9. **Start the Development Server**
 
    Start the development server using the following command:
 
