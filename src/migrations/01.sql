@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS services (
 CREATE TABLE IF NOT EXISTS items (
     id UUID PRIMARY KEY DEFAUlT uuid_generate_v4 (),
     name VARCHAR(255) NOT NULL,
-    price JSONB DEFAULT '[{}]',
+    price JSONB,
+    description VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT NULL
 );

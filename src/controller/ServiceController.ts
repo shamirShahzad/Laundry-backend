@@ -29,12 +29,12 @@ const serviceController = {
 
       const createServiceTup = await createService(newServiceTup);
       if (createServiceTup.success == false) {
-        if (createServiceTup.errorMessage === ERROR_NOT_FOUND) {
-          res.status(NOT_FOUND);
-          return next(new Error(ERROR_NOT_FOUND));
-        }
-        res.status(BAD_REQUEST);
-        return next(new Error(createServiceTup.error));
+        res.status(
+          createServiceTup.errorMessage === ERROR_NOT_FOUND
+            ? NOT_FOUND
+            : BAD_REQUEST
+        );
+        return next(createServiceTup.error);
       }
       res.status(SUCCESS_CREATED);
       return res.json({
@@ -57,16 +57,11 @@ const serviceController = {
       try {
         const serviceTup = await getServiceById(id.toString());
         if (serviceTup.success == false) {
-          if (serviceTup.errorMessage === ERROR_NOT_FOUND) {
-            res.status(NOT_FOUND);
-            res.json({
-              success: false,
-              statusCode: NOT_FOUND,
-              message: "Service not found.",
-              data: {},
-            });
-          }
-          res.status(BAD_REQUEST);
+          res.status(
+            serviceTup.errorMessage === ERROR_NOT_FOUND
+              ? NOT_FOUND
+              : BAD_REQUEST
+          );
           return next(serviceTup.error);
         }
         res.status(SUCCESS);
@@ -83,16 +78,9 @@ const serviceController = {
     try {
       const servicesTup = await getAllServices();
       if (servicesTup.success == false) {
-        if (servicesTup.errorMessage === ERROR_NOT_FOUND) {
-          res.status(NOT_FOUND);
-          res.json({
-            success: false,
-            statusCode: NOT_FOUND,
-            message: "Service Not Found.",
-            data: [],
-          });
-        }
-        res.status(BAD_REQUEST);
+        res.status(
+          servicesTup.errorMessage === ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+        );
         return next(servicesTup.error);
       }
       res.status(SUCCESS);
@@ -119,11 +107,9 @@ const serviceController = {
     try {
       const oldTup = await getServiceById(id.toString());
       if (oldTup.success == false) {
-        if (oldTup.errorMessage == ERROR_NOT_FOUND) {
-          res.status(NOT_FOUND);
-          return next(new Error("Service not found"));
-        }
-        res.status(BAD_REQUEST);
+        res.status(
+          oldTup.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+        );
         return next(oldTup.error);
       }
       const updateTup = req.body;
@@ -157,14 +143,9 @@ const serviceController = {
     try {
       const deleteTup = await deleteService(id.toString());
       if (deleteTup.success == false) {
-        if (deleteTup.errorMessage == ERROR_NOT_FOUND) {
-          res.status(NOT_FOUND);
-          return res.json({
-            success: NOT_FOUND,
-            message: "Service not found.",
-          });
-        }
-        res.status(BAD_REQUEST);
+        res.status(
+          deleteTup.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+        );
         return next(deleteTup.error);
       }
       return res.status(SUCCESS).json({

@@ -54,11 +54,11 @@ const customerController = {
         try {
           const customerTup = await getCustomerById(Number(id));
           if (customerTup.success == false) {
-            if (customerTup.errorMessage == ERROR_NOT_FOUND) {
-              res.status(NOT_FOUND);
-              return next(new Error("Customer not found"));
-            }
-            res.status(BAD_REQUEST);
+            res.status(
+              customerTup.errorMessage === ERROR_NOT_FOUND
+                ? NOT_FOUND
+                : BAD_REQUEST
+            );
             return next(customerTup.error);
           }
           res.status(SUCCESS);
@@ -75,11 +75,11 @@ const customerController = {
         try {
           const customerTup = await getCustomerByPhone(phone.toString());
           if (customerTup.success == false) {
-            if (customerTup.errorMessage == ERROR_NOT_FOUND) {
-              res.status(NOT_FOUND);
-              return next(new Error("Customer not found"));
-            }
-            res.status(BAD_REQUEST);
+            res.status(
+              customerTup.errorMessage === ERROR_NOT_FOUND
+                ? NOT_FOUND
+                : BAD_REQUEST
+            );
             return next(customerTup.error);
           }
           res.status(SUCCESS);
@@ -95,11 +95,9 @@ const customerController = {
       }
       const result = await getAllCustomers();
       if (result.success == false) {
-        if (result.errorMessage == ERROR_NOT_FOUND) {
-          res.status(NOT_FOUND);
-          return next(new Error("Customers not found"));
-        }
-        res.status(BAD_REQUEST);
+        res.status(
+          result.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+        );
         return next(result.error);
       }
       res.status(SUCCESS);
@@ -128,11 +126,9 @@ const customerController = {
     try {
       const oldTup = await getCustomerById(Number(id));
       if (oldTup.success == false) {
-        if (oldTup.errorMessage == ERROR_NOT_FOUND) {
-          res.status(NOT_FOUND);
-          return next(new Error("Customer not found"));
-        }
-        res.status(BAD_REQUEST);
+        res.status(
+          oldTup.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+        );
         return next(oldTup.error);
       }
       const updateTup = req.body;
@@ -141,10 +137,6 @@ const customerController = {
       customer = CustomerUpdate.parse(filledUpdateTup);
       const updateCustomerTup = await updateCustomer(Number(id), customer);
       if (updateCustomerTup?.success == false) {
-        if (updateCustomerTup.errorMessage == ERROR_NOT_FOUND) {
-          res.status(NOT_FOUND);
-          return next(new Error("Customer not found"));
-        }
         res.status(BAD_REQUEST);
         return next(updateCustomerTup.error);
       }
@@ -172,11 +164,9 @@ const customerController = {
     try {
       const result = await deleteCustomer(Number(id));
       if (result.success == false) {
-        if (result.errorMessage == ERROR_NOT_FOUND) {
-          res.status(NOT_FOUND);
-          return next(new Error(ERROR_NOT_FOUND));
-        }
-        res.status(BAD_REQUEST);
+        res.status(
+          result.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+        );
         return next(result.error);
       }
       res.status(SUCCESS);

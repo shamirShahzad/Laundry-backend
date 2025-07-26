@@ -7,7 +7,6 @@ const errorMiddleWare = (
   next: NextFunction
 ) => {
   if (err instanceof ZodError) {
-    console.log("IT IS");
     const zodErr = err as ZodError<any>;
     return res.status(400).json({
       success: false,
@@ -23,6 +22,7 @@ const errorMiddleWare = (
     message: err.message,
     success: false,
     stack: err.stack?.toString() || "No stack trace",
+    data: {},
   });
 };
 

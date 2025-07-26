@@ -1,10 +1,18 @@
 import { z } from "zod";
-import { Service } from "./service.model";
 export const Item = z.object({
-  id: z.uuid(),
+  id: z.uuid().optional(),
   name: z.string(),
-  price: z.array(Service).default([]),
+  price: z.record(z.string(), z.number()).default({}),
   description: z.string(),
   created_at: z.date(),
   updated_at: z.date().nullable(),
+});
+
+export const ItemUpdate = z.object({
+  id: z.uuid().optional(),
+  name: z.string().optional(),
+  price: z.record(z.string(), z.number()).default({}).optional(),
+  description: z.string().optional(),
+  created_at: z.date().optional(),
+  updated_at: z.date().nullable().optional(),
 });
