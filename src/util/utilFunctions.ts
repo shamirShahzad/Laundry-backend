@@ -7,3 +7,7 @@ export const fillEmptyObject = (source: any, fallback: any) => {
   }
   return result;
 };
+
+export const createNotFoundError = (message: string) => {
+  return new Error(`${message} not found.`);
+};

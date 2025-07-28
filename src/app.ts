@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import customerRouter from "./routes/CustomerRoutes";
 import serviceRouter from "./routes/ServiceRoutes";
 import itemRouter from "./routes/ItemRoutes";
+import { orderRouter } from "./routes/OrderRoutes";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +20,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/customers", customerRouter);
 app.use("/api/v1/services", serviceRouter);
 app.use("/api/v1/items", itemRouter);
+app.use("/api/v1/orders", orderRouter);
 app.use(errorMiddleWare);
 
 app.get("/", (req, res) => res.send("Hello World!"));

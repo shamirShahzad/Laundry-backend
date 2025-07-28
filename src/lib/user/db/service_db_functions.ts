@@ -2,7 +2,10 @@ import z from "zod";
 import { Service, ServiceUpdate } from "../../../models/service.model";
 import pool from "../../../db/config";
 import { ERRORS } from "../../../util/enums";
-const { ERROR_NOT_FOUND } = ERRORS;
+import { createNotFoundError } from "../../../util/utilFunctions";
+const { MSG_ERROR_NOT_FOUND } = ERRORS;
+
+const ServiceNotFound = createNotFoundError("Service");
 
 export const createService = async (serviceTup: z.infer<typeof Service>) => {
   const client = await pool.connect();
@@ -31,8 +34,8 @@ export const createService = async (serviceTup: z.infer<typeof Service>) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: ServiceNotFound,
       };
     }
     return {
@@ -62,8 +65,8 @@ export const getServiceById = async (id: string) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: ServiceNotFound,
       };
     }
     return {
@@ -92,8 +95,8 @@ export const getAllServices = async () => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: ServiceNotFound,
       };
     }
     return {
@@ -135,8 +138,8 @@ export const updateService = async (service: z.infer<typeof ServiceUpdate>) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: ServiceNotFound,
       };
     }
     return {
@@ -166,8 +169,8 @@ export const deleteService = async (id: string) => {
     if (result.rowCount == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: ServiceNotFound,
       };
     }
     return {

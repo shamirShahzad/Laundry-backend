@@ -14,7 +14,7 @@ import { STATUS_CODES, ERRORS } from "../util/enums";
 import { fillEmptyObject } from "../util/utilFunctions";
 const { BAD_REQUEST, SUCCESS_CREATED, SUCCESS, NOT_FOUND, SUCCESS_NO_CONTENT } =
   STATUS_CODES;
-const { ERROR_NOT_FOUND } = ERRORS;
+const { MSG_ERROR_NOT_FOUND } = ERRORS;
 const customerController = {
   createCustomer: async (
     req: AuthenticatedRequest,
@@ -55,7 +55,7 @@ const customerController = {
           const customerTup = await getCustomerById(Number(id));
           if (customerTup.success == false) {
             res.status(
-              customerTup.errorMessage === ERROR_NOT_FOUND
+              customerTup.errorMessage === MSG_ERROR_NOT_FOUND
                 ? NOT_FOUND
                 : BAD_REQUEST
             );
@@ -76,7 +76,7 @@ const customerController = {
           const customerTup = await getCustomerByPhone(phone.toString());
           if (customerTup.success == false) {
             res.status(
-              customerTup.errorMessage === ERROR_NOT_FOUND
+              customerTup.errorMessage === MSG_ERROR_NOT_FOUND
                 ? NOT_FOUND
                 : BAD_REQUEST
             );
@@ -96,7 +96,7 @@ const customerController = {
       const result = await getAllCustomers();
       if (result.success == false) {
         res.status(
-          result.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+          result.errorMessage == MSG_ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
         );
         return next(result.error);
       }
@@ -120,14 +120,14 @@ const customerController = {
     let customer: z.infer<typeof CustomerUpdate>;
     const { id } = req.params;
     if (id === undefined || id === null) {
-      return next(new Error(ERROR_NOT_FOUND));
+      return next(new Error(MSG_ERROR_NOT_FOUND));
     }
 
     try {
       const oldTup = await getCustomerById(Number(id));
       if (oldTup.success == false) {
         res.status(
-          oldTup.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+          oldTup.errorMessage == MSG_ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
         );
         return next(oldTup.error);
       }
@@ -159,13 +159,13 @@ const customerController = {
   ) => {
     const { id } = req.params;
     if (id === undefined || id === null) {
-      return next(new Error(ERROR_NOT_FOUND));
+      return next(new Error(MSG_ERROR_NOT_FOUND));
     }
     try {
       const result = await deleteCustomer(Number(id));
       if (result.success == false) {
         res.status(
-          result.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+          result.errorMessage == MSG_ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
         );
         return next(result.error);
       }

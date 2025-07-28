@@ -1,8 +1,11 @@
-import z, { success } from "zod";
+import z from "zod";
 import { Customer, CustomerUpdate } from "../../../models/customer.model";
 import pool from "../../../db/config";
 import { ERRORS } from "../../../util/enums";
-const { ERROR_NOT_FOUND } = ERRORS;
+import { createNotFoundError } from "../../../util/utilFunctions";
+const { MSG_ERROR_NOT_FOUND } = ERRORS;
+
+const CustomerNotFound = createNotFoundError("Customer");
 export const createCustomer = async (newCustomer: z.infer<typeof Customer>) => {
   const client = await pool.connect();
   try {
@@ -60,8 +63,8 @@ export const getCustomerById = async (id: number) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: CustomerNotFound,
       };
     }
     return {
@@ -92,8 +95,8 @@ export const getCustomerByPhone = async (phone: string) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: CustomerNotFound,
       };
     }
     return {
@@ -122,8 +125,8 @@ export const getAllCustomers = async () => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: CustomerNotFound,
       };
     }
     return {
@@ -173,8 +176,8 @@ export const updateCustomer = async (
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: CustomerNotFound,
       };
     }
     return {
@@ -205,8 +208,8 @@ export const deleteCustomer = async (id: number) => {
     if (result.rowCount == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: CustomerNotFound,
       };
     }
     return {

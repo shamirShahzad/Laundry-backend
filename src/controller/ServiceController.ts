@@ -3,8 +3,8 @@ import { Response, NextFunction } from "express";
 import { Service, ServiceUpdate } from "../models/service.model";
 import { ERRORS, STATUS_CODES } from "../util/enums";
 const { NOT_FOUND, BAD_REQUEST, SUCCESS_CREATED, SUCCESS } = STATUS_CODES;
-const { ERROR_NOT_FOUND, ERROR_BAD_REQUEST } = ERRORS;
-import z, { ZodError } from "zod";
+const { MSG_ERROR_NOT_FOUND, MSG_ERROR_BAD_REQUEST } = ERRORS;
+import z from "zod";
 import {
   createService,
   deleteService,
@@ -30,7 +30,7 @@ const serviceController = {
       const createServiceTup = await createService(newServiceTup);
       if (createServiceTup.success == false) {
         res.status(
-          createServiceTup.errorMessage === ERROR_NOT_FOUND
+          createServiceTup.errorMessage === MSG_ERROR_NOT_FOUND
             ? NOT_FOUND
             : BAD_REQUEST
         );
@@ -58,7 +58,7 @@ const serviceController = {
         const serviceTup = await getServiceById(id.toString());
         if (serviceTup.success == false) {
           res.status(
-            serviceTup.errorMessage === ERROR_NOT_FOUND
+            serviceTup.errorMessage === MSG_ERROR_NOT_FOUND
               ? NOT_FOUND
               : BAD_REQUEST
           );
@@ -79,7 +79,9 @@ const serviceController = {
       const servicesTup = await getAllServices();
       if (servicesTup.success == false) {
         res.status(
-          servicesTup.errorMessage === ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+          servicesTup.errorMessage === MSG_ERROR_NOT_FOUND
+            ? NOT_FOUND
+            : BAD_REQUEST
         );
         return next(servicesTup.error);
       }
@@ -101,14 +103,14 @@ const serviceController = {
   ) => {
     const { id } = req.params;
     if (id === undefined || id === null) {
-      return next(new Error(ERROR_BAD_REQUEST));
+      return next(new Error(MSG_ERROR_BAD_REQUEST));
     }
     let service: z.infer<typeof ServiceUpdate>;
     try {
       const oldTup = await getServiceById(id.toString());
       if (oldTup.success == false) {
         res.status(
-          oldTup.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+          oldTup.errorMessage == MSG_ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
         );
         return next(oldTup.error);
       }
@@ -138,13 +140,15 @@ const serviceController = {
   ) => {
     const { id } = req.params;
     if (id === undefined || id === null) {
-      return next(new Error(ERROR_NOT_FOUND));
+      return next(new Error(MSG_ERROR_NOT_FOUND));
     }
     try {
       const deleteTup = await deleteService(id.toString());
       if (deleteTup.success == false) {
         res.status(
-          deleteTup.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+          deleteTup.errorMessage == MSG_ERROR_NOT_FOUND
+            ? NOT_FOUND
+            : BAD_REQUEST
         );
         return next(deleteTup.error);
       }

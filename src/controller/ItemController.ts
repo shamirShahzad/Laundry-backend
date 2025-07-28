@@ -1,4 +1,4 @@
-import z, { success } from "zod";
+import z from "zod";
 import { Item, ItemUpdate } from "../models/item.model";
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
 import { Response, NextFunction } from "express";
@@ -12,7 +12,7 @@ import {
 import { STATUS_CODES, ERRORS } from "../util/enums";
 import { fillEmptyObject } from "../util/utilFunctions";
 const { SUCCESS, NOT_FOUND, SUCCESS_CREATED, BAD_REQUEST } = STATUS_CODES;
-const { ERROR_NOT_FOUND, ERROR_BAD_REQUEST } = ERRORS;
+const { MSG_ERROR_NOT_FOUND, MSG_ERROR_BAD_REQUEST } = ERRORS;
 
 const itemController = {
   getItems: async (
@@ -26,7 +26,9 @@ const itemController = {
         const itemTup = await getItemById(id.toString());
         if (itemTup.success == false) {
           res.status(
-            itemTup.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+            itemTup.errorMessage == MSG_ERROR_NOT_FOUND
+              ? NOT_FOUND
+              : BAD_REQUEST
           );
           return next(itemTup.error);
         }
@@ -40,7 +42,7 @@ const itemController = {
       const itemsTup = await getAllItems();
       if (itemsTup.success == false) {
         res.status(
-          itemsTup.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+          itemsTup.errorMessage == MSG_ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
         );
         return next(itemsTup.error);
       }
@@ -68,7 +70,7 @@ const itemController = {
       const createItemTup = await createItem(newItem);
       if (createItemTup.success == false) {
         res.status(
-          createItemTup.errorMessage == ERROR_NOT_FOUND
+          createItemTup.errorMessage == MSG_ERROR_NOT_FOUND
             ? NOT_FOUND
             : BAD_REQUEST
         );
@@ -92,14 +94,14 @@ const itemController = {
   ) => {
     const { id } = req.params;
     if (id == undefined || id == null) {
-      return next(new Error(ERROR_NOT_FOUND));
+      return next(new Error(MSG_ERROR_NOT_FOUND));
     }
     let item: z.infer<typeof ItemUpdate>;
     try {
       const oldTup = await getItemById(id.toString());
       if (oldTup.success == false) {
         res.status(
-          oldTup.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+          oldTup.errorMessage == MSG_ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
         );
         return next(oldTup.error);
       }
@@ -109,7 +111,7 @@ const itemController = {
       const updateItemTup = await updateItem(item);
       if (updateItemTup?.success == false) {
         res.status(
-          updateItemTup.errorMessage == ERROR_NOT_FOUND
+          updateItemTup.errorMessage == MSG_ERROR_NOT_FOUND
             ? NOT_FOUND
             : BAD_REQUEST
         );
@@ -132,13 +134,13 @@ const itemController = {
   ) => {
     const { id } = req.params;
     if (id == undefined || id == null) {
-      return next(new Error(ERROR_NOT_FOUND));
+      return next(new Error(MSG_ERROR_NOT_FOUND));
     }
     try {
       const result = await deleteItem(id.toString());
       if (result.success == false) {
         res.status(
-          result.errorMessage == ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
+          result.errorMessage == MSG_ERROR_NOT_FOUND ? NOT_FOUND : BAD_REQUEST
         );
       }
       return res.status(SUCCESS).json({

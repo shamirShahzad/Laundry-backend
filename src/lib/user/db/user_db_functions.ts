@@ -2,7 +2,10 @@ import pool from "../../../db/config";
 import { z } from "zod";
 import { User } from "../../../models/user.model";
 import { ERRORS } from "../../../util/enums";
-const { ERROR_NOT_FOUND } = ERRORS;
+import { createNotFoundError } from "../../../util/utilFunctions";
+const { MSG_ERROR_NOT_FOUND } = ERRORS;
+
+const UserNotFound = createNotFoundError("User");
 
 export const registerUser = async (newUser: z.infer<typeof User>) => {
   const client = await pool.connect();
@@ -18,8 +21,6 @@ export const registerUser = async (newUser: z.infer<typeof User>) => {
                 role,
                 created_at,
                 updated_at)
-
-
                 VALUES (
                 $1,
                 $2,
@@ -72,8 +73,8 @@ export const loginUser = async (email: string) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: UserNotFound,
       };
     }
     return {
@@ -114,8 +115,8 @@ export const getUserById = async (id: string) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: UserNotFound,
       };
     }
     return {

@@ -1,9 +1,13 @@
 import { Item, ItemUpdate } from "../../../models/item.model";
-import z, { success } from "zod";
+import z from "zod";
 import pool from "../../../db/config";
 import { ERRORS } from "../../../util/enums";
-import { error } from "console";
-const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND } = ERRORS;
+import { createNotFoundError } from "../../../util/utilFunctions";
+import { BAD_REQUEST_ERROR } from "../../../util/Errors";
+const { MSG_ERROR_BAD_REQUEST, MSG_ERROR_NOT_FOUND } = ERRORS;
+
+const ItemNotFound = createNotFoundError("Item");
+
 export const createItem = async (newItem: z.infer<typeof Item>) => {
   const client = await pool.connect();
   const { name, price, description } = newItem;
@@ -36,14 +40,14 @@ export const createItem = async (newItem: z.infer<typeof Item>) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: ItemNotFound,
       };
     } else if (result.rowCount == 0) {
       return {
         success: false,
-        errorMessage: ERROR_BAD_REQUEST,
-        error: ERROR_BAD_REQUEST,
+        errorMessage: MSG_ERROR_BAD_REQUEST,
+        error: BAD_REQUEST_ERROR,
       };
     }
     return {
@@ -73,8 +77,8 @@ export const getItemById = async (id: string) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: ItemNotFound,
       };
     }
     return {
@@ -103,8 +107,8 @@ export const getAllItems = async () => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        error: ERROR_NOT_FOUND,
-        errorMEssage: ERROR_NOT_FOUND,
+        error: MSG_ERROR_NOT_FOUND,
+        errorMEssage: ItemNotFound,
       };
     }
     return {
@@ -134,8 +138,8 @@ export const deleteItem = async (id: string) => {
     if (result.rowCount == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: ItemNotFound,
       };
     }
     return {
@@ -179,8 +183,8 @@ export const updateItem = async (item: z.infer<typeof ItemUpdate>) => {
     if (result.rows.length == 0) {
       return {
         success: false,
-        errorMessage: ERROR_NOT_FOUND,
-        error: ERROR_NOT_FOUND,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: ItemNotFound,
       };
     }
     return {
