@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import userRouter from "./routes/UserRoutes";
 import errorMiddleWare from "./middlewares/errorMiddleware";
 import cookieParser from "cookie-parser";
@@ -10,6 +11,14 @@ import { orderRouter } from "./routes/OrderRoutes";
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+//Cors
+app.use(
+  cors({
+    origin: process.env.CORS,
+    credentials: true,
+  })
+);
 
 //Middlewares
 app.use(express.json());

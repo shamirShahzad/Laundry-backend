@@ -38,8 +38,8 @@ const userController = {
 
     const registerTup = await registerUser(newUser);
     if (registerTup.success == false) {
-      res.status(INTERNAL_SERVER_ERROR);
-      return next(new Error(registerTup.errorMessage));
+      res.status(BAD_REQUEST);
+      return next(registerTup.error);
     }
     //If all goes well then we hit this
     return res.status(SUCCESS_CREATED).send({
@@ -65,7 +65,7 @@ const userController = {
 
     if (loginTup.success == false) {
       res.status(BAD_REQUEST);
-      return next(new Error(loginTup.errorMessage));
+      return next(loginTup.errorMessage);
     }
 
     const isPasswordMatch = await bcrypt.compare(
@@ -75,7 +75,7 @@ const userController = {
 
     if (!isPasswordMatch) {
       res.status(BAD_REQUEST);
-      return next(new Error("Invalid email or password"));
+      return next(new Error("Invalid credentials"));
     }
 
     // return res.status(SUCCESS).send({
@@ -102,7 +102,7 @@ const userController = {
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(SUCCESS).send({
+    return res.status(SUCCESS).json({
       success: true,
       statusCode: SUCCESS,
       message: "User logged in successfully",

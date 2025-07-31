@@ -53,6 +53,15 @@ export const registerUser = async (newUser: z.infer<typeof User>) => {
     //Rollback if any error in adding data
     await client.query("ROLLBACK");
 
+    if (insertionError.code == "23505") {
+      insertionError.message = "User already exists";
+      return {
+        success: false,
+        errorMessage: "User already exists",
+        error: insertionError,
+      };
+    }
+
     return {
       success: false,
       errorMessage: "Something went wrong while registering user",
