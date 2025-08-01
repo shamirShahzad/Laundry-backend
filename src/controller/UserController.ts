@@ -78,13 +78,6 @@ const userController = {
       return next(new Error("Invalid credentials"));
     }
 
-    // return res.status(SUCCESS).send({
-    //   success: true,
-    //   statusCode: SUCCESS,
-    //   message: "User logged in successfully",
-    //   data: loginTup.data,
-    // });
-
     const token = jwt.sign(
       {
         id: loginTup?.data?.id,
@@ -111,7 +104,11 @@ const userController = {
     });
   },
 
-  logout: async (req: AuthenticatedRequest, res: Response) => {
+  logout: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     req.user = null;
     res.cookie("token", "", { maxAge: 0 });
     res.status(SUCCESS).json({
@@ -121,7 +118,7 @@ const userController = {
     });
   },
 
-  dashboard: async (req: AuthenticatedRequest, res: Response) => {
+  user: async (req: AuthenticatedRequest, res: Response) => {
     return res.status(SUCCESS).json({
       success: true,
       statusCode: SUCCESS,
