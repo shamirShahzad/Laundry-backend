@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { nullable, z } from "zod";
 export const Customer = z.object({
   id: z.number().optional(),
   name: z.string(),
@@ -6,10 +6,11 @@ export const Customer = z.object({
   phone: z.string(),
   address: z
     .object({
-      city: z.string(),
+      country: z.string(),
+      state: z.string().nullable(),
+      city: z.string().nullable(),
       street: z.string(),
       building: z.string(),
-      country: z.string(),
     })
     .optional(),
   created_at: z.date(),
@@ -23,10 +24,11 @@ export const CustomerUpdate = z.object({
   phone: z.string().optional(),
   address: z
     .object({
-      city: z.string(),
+      country: z.string(),
+      state: z.string().nullable(),
+      city: z.string().nullable(),
       street: z.string(),
       building: z.string(),
-      country: z.string(),
     })
     .optional(),
   created_at: z.date().optional(),
