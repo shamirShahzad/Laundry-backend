@@ -31,6 +31,5 @@ export const CustomerUpdate = z.object({
       building: z.string(),
     })
     .optional(),
-  created_at: z.date().optional(),
-  updated_at: z.date().nullable().optional(),
+  updated_at: z.coerce.date().nullable().optional(),
 });

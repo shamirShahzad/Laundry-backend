@@ -13,6 +13,5 @@ export const ItemUpdate = z.object({
   name: z.string().optional(),
   price: z.record(z.string(), z.number()).default({}).optional(),
   description: z.string().optional(),
-  created_at: z.date().optional(),
-  updated_at: z.date().nullable().optional(),
+  updated_at: z.coerce.date().nullable().optional(),
 });

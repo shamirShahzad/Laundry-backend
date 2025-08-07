@@ -133,7 +133,7 @@ const customerController = {
       }
       const updateTup = req.body;
       const filledUpdateTup = fillEmptyObject(updateTup, oldTup.data);
-      console.log("Update TUP", filledUpdateTup);
+      delete filledUpdateTup.created_at;
       customer = CustomerUpdate.parse(filledUpdateTup);
       const updateCustomerTup = await updateCustomer(Number(id), customer);
       if (updateCustomerTup?.success == false) {

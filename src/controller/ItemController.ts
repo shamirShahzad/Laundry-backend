@@ -107,6 +107,7 @@ const itemController = {
       }
       const updateTup = req.body;
       const filledUpdateTup = fillEmptyObject(updateTup, oldTup.data);
+      delete filledUpdateTup.created_at;
       const item = ItemUpdate.parse(filledUpdateTup);
       const updateItemTup = await updateItem(item);
       if (updateItemTup?.success == false) {

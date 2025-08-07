@@ -11,6 +11,5 @@ export const ServiceUpdate = z.object({
   id: z.uuid().optional(),
   name: z.string().optional(),
   description: z.string().optional(),
-  created_at: z.date().optional(),
-  updated_at: z.date().nullable().optional(),
+  updated_at: z.coerce.date().nullable().optional(),
 });

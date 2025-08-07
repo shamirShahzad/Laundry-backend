@@ -116,6 +116,7 @@ const serviceController = {
       }
       const updateTup = req.body;
       const filledUpdateTup = fillEmptyObject(updateTup, oldTup.data);
+      delete filledUpdateTup.created_at;
       service = ServiceUpdate.parse(filledUpdateTup);
       const updatedServiceTup = await updateService(service);
       if (updatedServiceTup?.success == false) {
