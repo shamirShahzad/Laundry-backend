@@ -8,6 +8,7 @@ import customerRouter from "./routes/CustomerRoutes";
 import serviceRouter from "./routes/ServiceRoutes";
 import itemRouter from "./routes/ItemRoutes";
 import { orderRouter } from "./routes/OrderRoutes";
+import path from "path";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +20,9 @@ app.use(
     credentials: true,
   })
 );
+
+//Serve uploads folder
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //Middlewares
 app.use(express.json());

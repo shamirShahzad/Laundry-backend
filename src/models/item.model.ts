@@ -4,6 +4,7 @@ export const Item = z.object({
   name: z.string(),
   price: z.record(z.string(), z.number()).default({}),
   description: z.string(),
+  image: z.string().optional(),
   created_at: z.date(),
   updated_at: z.date().nullable(),
 });
@@ -13,5 +14,6 @@ export const ItemUpdate = z.object({
   name: z.string().optional(),
   price: z.record(z.string(), z.number()).default({}).optional(),
   description: z.string().optional(),
+  image: z.string().optional(),
   updated_at: z.coerce.date().nullable().optional(),
 });
