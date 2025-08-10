@@ -18,18 +18,16 @@ export const registerUser = async (newUser: z.infer<typeof User>) => {
                 email,
                 password,
                 phone,
-                role,
-                created_at,
-                updated_at)
+                role
+                )
                 VALUES (
                 $1,
                 $2,
                 $3,
                 $4,
                 $5,
-                $6,
-                $7,
-                $8)
+                $6
+                )
                 RETURNING id,name,email,phone,role,created_at,updated_at
               `;
     const result = await client.query(queryStr, [
@@ -39,8 +37,6 @@ export const registerUser = async (newUser: z.infer<typeof User>) => {
       newUser.password,
       newUser.phone,
       newUser.role,
-      newUser.created_at,
-      newUser.updated_at,
     ]);
 
     // Commit the transaction

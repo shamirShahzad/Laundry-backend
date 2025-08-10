@@ -1,18 +1,21 @@
 import { z } from "zod";
+const PriceSchema = z.object({
+  serviceName: z.string().min(1, "Service name is required"),
+  price: z.number().min(0, "Price must be greater than 0"),
+});
+
 export const Item = z.object({
   id: z.uuid().optional(),
   name: z.string(),
-  price: z.record(z.string(), z.number()).default({}),
+  prices: z.array(PriceSchema).min(1, "Price is required"),
   description: z.string(),
   image: z.string().optional(),
-  created_at: z.date(),
-  updated_at: z.date().nullable(),
 });
 
 export const ItemUpdate = z.object({
   id: z.uuid().optional(),
   name: z.string().optional(),
-  price: z.record(z.string(), z.number()).default({}).optional(),
+  prices: z.array(PriceSchema).optional(),
   description: z.string().optional(),
   image: z.string().optional(),
   updated_at: z.coerce.date().nullable().optional(),

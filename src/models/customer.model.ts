@@ -1,4 +1,4 @@
-import { nullable, z } from "zod";
+import { z } from "zod";
 export const Customer = z.object({
   id: z.number().optional(),
   name: z.string(),
@@ -13,8 +13,6 @@ export const Customer = z.object({
       building: z.string(),
     })
     .optional(),
-  created_at: z.date(),
-  updated_at: z.date().nullable(),
 });
 
 export const CustomerUpdate = z.object({

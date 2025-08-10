@@ -12,14 +12,10 @@ export const createService = async (serviceTup: z.infer<typeof Service>) => {
   const qStr = `
     INSERT INTO services (
     name,
-    description,
-    created_at,
-    updated_at
+    description
     ) VALUES (
     $1,
-    $2,
-    $3,
-    $4
+    $2
     ) RETURNING *`;
 
   try {
@@ -27,8 +23,6 @@ export const createService = async (serviceTup: z.infer<typeof Service>) => {
     const result = await client.query(qStr, [
       serviceTup.name,
       serviceTup.description,
-      new Date(),
-      null,
     ]);
     await client.query("COMMIT");
     if (result.rows.length == 0) {

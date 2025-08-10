@@ -14,16 +14,14 @@ export const createCustomer = async (newCustomer: z.infer<typeof Customer>) => {
             (name,
             email,
             phone,
-            address,
-            created_at,
-            updated_at)
+            address
+            )
             VALUES (
             $1,
             $2,
             $3,
-            $4,
-            $5,
-            $6)
+            $4
+            )
             RETURNING id,name,email,phone,address,created_at,updated_at
             `;
     const result = await client.query(qryStr, [
@@ -31,8 +29,6 @@ export const createCustomer = async (newCustomer: z.infer<typeof Customer>) => {
       newCustomer.email,
       newCustomer.phone,
       newCustomer.address,
-      newCustomer.created_at,
-      newCustomer.updated_at,
     ]);
     await client.query("COMMIT");
     return {

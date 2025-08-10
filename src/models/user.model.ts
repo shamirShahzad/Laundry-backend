@@ -7,6 +7,4 @@ export const User = z.object({
   password: z.string(),
   phone: z.string(),
   role: z.string(),
-  created_at: z.date(),
-  updated_at: z.date().nullable(),
 });

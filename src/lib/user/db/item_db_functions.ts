@@ -10,11 +10,11 @@ const ItemNotFound = createNotFoundError("Item");
 
 export const createItem = async (newItem: z.infer<typeof Item>) => {
   const client = await pool.connect();
-  const { name, price, description, image } = newItem;
+  const { name, prices, description, image } = newItem;
   let qStr = `
     INSERT INTO items (
     name,
-    price,
+    prices,
     description,
     image,
     created_at,
@@ -29,10 +29,11 @@ export const createItem = async (newItem: z.infer<typeof Item>) => {
     ) RETURNING *
     `;
   try {
+    const strigifiedPrices = JSON.stringify(prices);
     await client.query("BEGIN");
     const result = await client.query(qStr, [
       name,
-      price,
+      strigifiedPrices,
       description,
       image,
       new Date(),
@@ -163,22 +164,23 @@ export const deleteItem = async (id: string) => {
 
 export const updateItem = async (item: z.infer<typeof ItemUpdate>) => {
   const client = await pool.connect();
-  const { id, name, price, description, image } = item;
+  const { id, name, prices, description, image } = item;
   const qStr = `
-    UPDATE items SET
-    name = $1,
-    price = $2,
-    description = $3,
-    image = $4,
-    updated_at = $5
-    WHERE id = $6
-    RETURNING *
-    `;
+  UPDATE items SET
+  name = $1,
+  prices = $2,
+  description = $3,
+  image = $4,
+  updated_at = $5
+  WHERE id = $6
+  RETURNING *
+  `;
   try {
+    const stringifiedPrices = JSON.stringify(prices);
     await client.query("BEGIN");
     const result = await client.query(qStr, [
       name,
-      price,
+      stringifiedPrices,
       description,
       image,
       new Date(),

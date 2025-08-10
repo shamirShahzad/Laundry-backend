@@ -89,24 +89,14 @@ export const createOrder = async (newOrderTup: z.infer<typeof Order>) => {
         cust_id,
         status,
         payment_status,
-        notes,
-        created_at,
-        updated_at
+        notes
         ) VALUES (
          $1,
          $2,
          $3,
-         $4,
-         $5,
-         $6) RETURNING *`;
-    const values = [
-      Number(cust_id),
-      status,
-      payment_status,
-      notes,
-      new Date(),
-      null,
-    ];
+         $4
+         ) RETURNING *`;
+    const values = [Number(cust_id), status, payment_status, notes];
     await client.query("BEGIN");
     const orderTup = await client.query(qStr, values);
     await client.query("COMMIT");

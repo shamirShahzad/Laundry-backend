@@ -64,11 +64,9 @@ const itemController = {
     let newItem: z.infer<typeof Item>;
     try {
       const myItem = req.body;
-      if (myItem.price) {
-        myItem.price = JSON.parse(myItem.price);
+      if (typeof myItem.prices === "string") {
+        myItem.prices = JSON.parse(myItem.prices);
       }
-      myItem.created_at = new Date();
-      myItem.updated_at = null;
 
       if (req.file) {
         myItem.image = `/uploads/${req.file.filename}`;
@@ -116,8 +114,10 @@ const itemController = {
       if (req.file) {
         updateTup.image = req.file.filename;
       }
+      if (typeof updateTup.prices === "string") {
+        updateTup.prices = JSON.parse(updateTup.prices);
+      }
       const filledUpdateTup = fillEmptyObject(updateTup, oldTup.data);
-      delete filledUpdateTup.created_at;
       const item = ItemUpdate.parse(filledUpdateTup);
       const updateItemTup = await updateItem(item);
       if (updateItemTup?.success == false) {

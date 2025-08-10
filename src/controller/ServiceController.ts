@@ -23,10 +23,7 @@ const serviceController = {
     let newServiceTup: z.infer<typeof Service>;
     try {
       const serviceTup = req.body;
-      serviceTup.created_at = new Date();
-      serviceTup.updated_at = null;
       newServiceTup = Service.parse(serviceTup);
-
       const createServiceTup = await createService(newServiceTup);
       if (createServiceTup.success == false) {
         res.status(
@@ -116,7 +113,6 @@ const serviceController = {
       }
       const updateTup = req.body;
       const filledUpdateTup = fillEmptyObject(updateTup, oldTup.data);
-      delete filledUpdateTup.created_at;
       service = ServiceUpdate.parse(filledUpdateTup);
       const updatedServiceTup = await updateService(service);
       if (updatedServiceTup?.success == false) {

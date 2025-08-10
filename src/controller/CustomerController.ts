@@ -24,8 +24,6 @@ const customerController = {
     let newCustomer: z.infer<typeof Customer>;
     try {
       const myCustomer = req.body;
-      myCustomer.created_at = new Date();
-      myCustomer.updated_at = null;
       newCustomer = Customer.parse(myCustomer);
     } catch (error: any) {
       return next(error);
@@ -133,7 +131,6 @@ const customerController = {
       }
       const updateTup = req.body;
       const filledUpdateTup = fillEmptyObject(updateTup, oldTup.data);
-      delete filledUpdateTup.created_at;
       customer = CustomerUpdate.parse(filledUpdateTup);
       const updateCustomerTup = await updateCustomer(Number(id), customer);
       if (updateCustomerTup?.success == false) {
