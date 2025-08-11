@@ -1,5 +1,6 @@
 import { z } from "zod";
 const PriceSchema = z.object({
+  serviceId: z.uuid("Service id is required"),
   serviceName: z.string().min(1, "Service name is required"),
   price: z.number().min(0, "Price must be greater than 0"),
 });

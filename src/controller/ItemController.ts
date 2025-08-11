@@ -112,7 +112,7 @@ const itemController = {
       }
       const updateTup = req.body;
       if (req.file) {
-        updateTup.image = req.file.filename;
+        updateTup.image = `/uploads/${req.file.filename}`;
       }
       if (typeof updateTup.prices === "string") {
         updateTup.prices = JSON.parse(updateTup.prices);
