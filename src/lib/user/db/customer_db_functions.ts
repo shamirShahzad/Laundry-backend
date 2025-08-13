@@ -47,7 +47,18 @@ export const createCustomer = async (newCustomer: z.infer<typeof Customer>) => {
   }
 };
 
-export const getCustomerById = async (id: number) => {
+type CustomerResult =
+  | {
+      success: true;
+      data: any;
+    }
+  | {
+      success: false;
+      errorMessage: string;
+      error: any;
+    };
+
+export const getCustomerById = async (id: number): Promise<CustomerResult> => {
   const client = await pool.connect();
   const qStr = `
     SELECT * FROM customers WHERE id = $1    
