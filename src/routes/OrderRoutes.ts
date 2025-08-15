@@ -15,3 +15,9 @@ orderRouter.get(
 orderRouter.post("/create", isAuthenticated, orderController.createOrder);
 
 orderRouter.post("/update/:id", isAuthenticated, orderController.updateOrder);
+
+orderRouter.post(
+  "/update/status/:id",
+  isAuthenticated,
+  orderController.updateOrderStatus
+);

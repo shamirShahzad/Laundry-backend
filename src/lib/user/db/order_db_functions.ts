@@ -1,7 +1,12 @@
 import z, { success } from "zod";
 import pool from "../../../db/config";
 import { ERRORS } from "../../../util/enums";
-import { Order, OrderItems } from "../../../models/order.model";
+import {
+  Order,
+  OrderItems,
+  OrderUpdate,
+  OrderUpdateStatus,
+} from "../../../models/order.model";
 import { getCustomerById } from "./customer_db_functions";
 import { create } from "node:domain";
 import { createNotFoundError } from "../../../util/utilFunctions";
@@ -85,7 +90,8 @@ type OrderResult =
 export const createOrder = async (
   newOrderTup: z.infer<typeof Order>
 ): Promise<OrderResult> => {
-  const { cust_id, total, paid_amount, notes, items } = newOrderTup;
+  const { cust_id, total, paid_amount, notes, items, payment_status } =
+    newOrderTup;
   const client = await pool.connect();
 
   try {
@@ -98,14 +104,16 @@ export const createOrder = async (
         cust_id,
         notes,
         total,
-        paid_amount
+        paid_amount,
+        payment_status
         ) VALUES (
          $1,
          $2,
          $3,
-         $4
+         $4,
+         $5
          ) RETURNING *`;
-    const values = [cust_id, notes, total, paid_amount];
+    const values = [cust_id, notes, total, paid_amount, payment_status];
     await client.query("BEGIN");
     const orderTup = await client.query(qStr, values);
     if (orderTup.rowCount == 0) {
@@ -222,15 +230,15 @@ export const getOrdersForTable = async (filters: any) => {
     values.push(filters.total_amount);
   }
   if (filters.from) {
-    conditions.push(`created_at >= $${i++}`);
+    conditions.push(`o.created_at >= $${i++}`);
     values.push(filters.from);
   }
   if (filters.to) {
-    conditions.push(`created_at <= $${i++}`);
+    conditions.push(`o.created_at <= $${i++}`);
     values.push(filters.to);
   }
   if (filters.from && filters.to) {
-    conditions.push(`created_at BETWEEN $${i++} AND $${i++}`);
+    conditions.push(`o.created_at BETWEEN $${i++} AND $${i++}`);
     values.push(filters.from);
     values.push(filters.to);
   }
@@ -238,10 +246,12 @@ export const getOrdersForTable = async (filters: any) => {
     conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
   const qStr = `
         SELECT
+              o.id,
               c.name as cust_name,
               c.phone as cust_phone,
               o.status,
               o.payment_status,
+              o.paid_amount,
               o.total,
               o.notes,
               o.created_at,
@@ -263,6 +273,7 @@ export const getOrdersForTable = async (filters: any) => {
         JOIN customers c ON o.cust_id = c.id
         JOIN order_items oi ON o.id = oi.order_id
         JOIN items i ON oi.item_id = i.id
+        ${whereClause}
         GROUP BY
               c.name,
               c.phone,
@@ -271,8 +282,10 @@ export const getOrdersForTable = async (filters: any) => {
               o.total,
               o.notes,
               o.created_at,
-              o.updated_at
-         ${whereClause} ORDER BY o.created_at DESC;
+              o.updated_at,
+              o.id,
+              o.paid_amount
+          ORDER BY o.created_at DESC;
     `;
   const client = await pool.connect();
   try {
@@ -296,6 +309,61 @@ export const getOrdersForTable = async (filters: any) => {
     return {
       success: false,
       errorMessage: "Something went wrong while getting orders",
+      error: error,
+    };
+  } finally {
+    client.release(true);
+  }
+};
+
+export const UpdateOrderStatus = async (
+  orderTup: z.infer<typeof OrderUpdateStatus>,
+  id: string
+) => {
+  const client = await pool.connect();
+  const variables = [];
+  const values = [];
+  let i = 1;
+  if (orderTup.payment_status) {
+    variables.push(`payment_status = $${i++}`);
+    values.push(orderTup.payment_status);
+  }
+  if (orderTup.status) {
+    variables.push(`status = $${i++}`);
+    values.push(orderTup.status);
+  }
+  variables.push(`updated_at = $${i++}`);
+  values.push(new Date());
+
+  const qStr = `
+    UPDATE orders
+    SET
+    ${variables.join(", ")}
+    WHERE id = $${i}
+    RETURNING *
+  `;
+  values.push(id);
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(qStr, values);
+    if (result.rows.length == 0) {
+      await client.query("ROLLBACK");
+      return {
+        success: false,
+        errorMessage: MSG_ERROR_NOT_FOUND,
+        error: OrderNotFound,
+      };
+    }
+    await client.query("COMMIT");
+    return {
+      success: true,
+      data: result.rows[0],
+    };
+  } catch (error: any) {
+    await client.query("ROLLBACK");
+    return {
+      success: false,
+      errorMessage: "Something went wrong while updating order status",
       error: error,
     };
   } finally {

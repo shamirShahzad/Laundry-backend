@@ -3,6 +3,19 @@ export const Roles = {
   USER: "user",
 };
 
+export const ORDER_STATUS = {
+  PENDING: "pending",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+};
+
+export const PAYMENT_STATUS = {
+  PAID: "paid",
+  PARTIAL: "partial",
+  UNPAID: "unpaid",
+  REFUNDED: "refunded",
+};
+
 export const STATUS_CODES = {
   SUCCESS: 200,
   SUCCESS_CREATED: 201,

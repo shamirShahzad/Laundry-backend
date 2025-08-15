@@ -24,5 +24,13 @@ export const OrderUpdate = z.object({
   status: z.string().optional(),
   payment_status: z.string().optional(),
   notes: z.string().optional(),
+  items: z.array(OrderItems),
+  total: z.number(),
+  paid_amount: z.number(),
   updated_at: z.coerce.date().nullable().optional(),
+});
+
+export const OrderUpdateStatus = z.object({
+  payment_status: z.string().optional(),
+  status: z.string().optional(),
 });
